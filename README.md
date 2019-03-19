@@ -1,10 +1,10 @@
-## How to install
+## Как установить
 
-`npx @vkontakte/create-vk-app <folder name>`
+`npm install`
 
-## How to start
+## Как запустить проект
 
-Go to created folder and run:
-`yarn start` || `npm start` — this will start dev server with hot reload on `localhost:10888`.
+Запустить команды:
+`yarn start` || `npm start` — и девелоперская сборка откроется в браузере `localhost:10888`.
 
-`yarn run build` || `npm run build` — this will build production bundle, with treeshaking, uglify and all this modern fancy stuff
+`yarn run build` || `npm run build` — эти команды отвечают за сборку продакшен, которую вы позже можеет использовать для своего сервиса
