@@ -13,8 +13,6 @@ class Home extends React.Component {
 			id, items 
 		} = this.props
 
-		console.log(items)
-
 		return (
 			<Panel id={id}>
 				<PanelHeader>Товары</PanelHeader>
