@@ -23,7 +23,8 @@ class App extends React.Component {
 					this.setState({ fetchedUser: e.detail.data });
 					break;
 				case 'VKWebAppAccessTokenReceived':
-					this.setState({ authToken : e.detail.data.access_token })
+					this.setState({ authToken : e.detail.data.access_token });
+					break;
 				default:
 					console.log(e.detail.type);
 			}
