@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import connect from '@vkontakte/vkui-connect';
 import App from './App';
+import { BrowserRouter as Router, Route } from "react-router-dom";
 // import registerServiceWorker from './sw';
 
 // Init VK App
@@ -15,4 +16,8 @@ connect.send('VKWebAppInit', {});
 // Подробнее про сервис воркеры можно почитать тут — https://vk.cc/8MHpmT 
 // registerServiceWorker();
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <Router>
+        <Route path={["/:activePanel", "/:activePanel/:itemId"]} render={props => <App {...props}/>}/>
+    </Router>
+    , document.getElementById('root'));
