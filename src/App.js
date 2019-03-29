@@ -10,6 +10,7 @@ class App extends React.Component {
 		super(props);
 
 		this.state = {
+			activePanel : 'items',
 			authToken : null,
 			items : [],
 			item : null
@@ -19,17 +20,21 @@ class App extends React.Component {
 		this.getInfoItem = this.getInfoItem.bind(this)
 	}
 
-	componentDidMount() {
+	getLocationHash() {
+		return window.location.hash.replace('#','')
+	}
+
+	componentWillMount() {
 		connect.subscribe((e) => {
 			switch (e.detail.type) {
 				case 'VKWebAppAccessTokenReceived':
 					this.setState({ authToken : e.detail.data.access_token });
 					break;
 				case 'VKWebAppCallAPIMethodResult':
-					if (e.detail.data.request_id == 1234567) {
-						this.setState({ items : e.detail.data.response })
+					if (e.detail.data.request_id === 1234567) {
+						this.setState({ items : e.detail.data.response.items })
 					}
-					if (e.detail.data.request_id == 123) {
+					if (e.detail.data.request_id === 123) {
 						this.setState({ item : e.detail.data.response.items[0] })
 					}
 					break;
@@ -37,7 +42,17 @@ class App extends React.Component {
 					console.log(e.detail.type);
 			}
 		});
-		connect.send("VKWebAppGetAuthToken", {"app_id": 6906999, "scope": "market"});
+		connect.send("VKWebAppGetAuthToken", {"app_id": 6918064, "scope": "market"});
+
+		let hash = this.getLocationHash()
+		if (hash === 'items') {
+			this.setState({ activePanel : 'items' }, function() { this.getItems() })
+		} else if (hash.indexOf('item') !== -1) {
+			let id = hash.replace('item','')
+			this.setState({ activePanel : 'item' }, function() { this.getInfoItem(id) })
+		} else {
+			this.setState({ activePanel : 'items' }, function() { this.getItems() })
+		}
 	}
 
 	getItems() {
@@ -45,26 +60,38 @@ class App extends React.Component {
 		connect.send("VKWebAppCallAPIMethod", {"method": "market.get", "params": {"owner_id": ownerId , "v":"5.92", "access_token": this.state.authToken, "request_id" : 1234567 }});
 	}
 
-	getInfoItem() {
+	getInfoItem(id) {
 		const ownerId = -124527492
-		let id = this.props.match.params.itemId
 		let itemId = `${ownerId}_${id}`
-		connect.send("VKWebAppCallAPIMethod", {"method": "market.getById", "params": {"item_ids": itemId , "v":"5.92", "access_token": this.state.authToken, "request_id" : 123 }});
+		connect.send("VKWebAppCallAPIMethod", {"method": "market.getById", "params": {"item_ids": itemId , "v":"5.92", "extended" : 1,  "access_token": this.state.authToken, "request_id" : 123 }});
+	}
+
+	go = (e, object) => {
+		let activePanel = e.currentTarget.dataset.to
+		this.setState({ activePanel : activePanel })
+		if (activePanel === 'items') {
+			connect.send("VKWebAppSetLocation", {"location": "items"});
+			this.getItems()
+		}
+		if (activePanel === 'item') {
+			connect.send("VKWebAppSetLocation", {"location": `item${object.itemId}`});
+			this.getInfoItem(object.itemId)
+		}
 	}
 
 	render() {
-		let activePanel = this.props.match.params.activePanel
+		console.log('render')
 		return (
-			<View activePanel={activePanel}>
+			<View activePanel={this.state.activePanel}>
 				<Items 
 					id="items" 
-					getItems={() => this.getItems()}
 					items={this.state.items}
+					go={this.go}
 				/>
 				<Item 
-					id="item" 
-					getInfoItem={() => this.getInfoItem()}
+					id="item"
 					item={this.state.item}
+					go={this.go}
 				/>
 			</View>
 		);

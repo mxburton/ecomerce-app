@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Panel, PanelHeader, FixedLayout, Button, Div, Header, Gallery, Group, HeaderButton } from '@vkontakte/vkui';
 import Icon24Back from '@vkontakte/icons/dist/24/back'
-import { Link } from "react-router-dom";
 
 class Item extends React.Component {
 	constructor(props) {
@@ -10,56 +9,62 @@ class Item extends React.Component {
         
         this.state = {
             slideIndex: 0,
-            imageWidth : 150,
-            imageHeight : 150
+            imageHeight : 350
         }
     }
     
-    componentWillMount() {
-        this.props.getInfoItem()
-    }
-
-    componentDidMount() {
-        let { item } = this.props
-
-        if (item !== null) {
-            this.setState({
-                imageHeight : item.photos[0].height * ( item.photos[0].height / window.document.body.offsetHeight )
-            })
-        }
-    }
-
 	render() {
         let { id, item } = this.props
 
 		return (
-            <Panel id={id}>
+            <Panel id={id} style={{ marginBottom : 100 }}>
             {
                 item !== null &&
                 <div>
                     <PanelHeader 
-                        left={<Link to="/items"><HeaderButton><Icon24Back/></HeaderButton></Link>}
+                        left={<HeaderButton data-to="items" onClick={(e) => this.props.go(e)}><Icon24Back/></HeaderButton>}
                     >Товар</PanelHeader>
                     <Header>{item.title} <b>{item.price.text}</b></Header>
-                    <Gallery
-                        slideWidth="100%"
-                        style={{ height: this.state.imageHeight, textAlign : 'center' }}
-                        onChange={slideIndex => this.setState({
-                            slideIndex : slideIndex,
-                            imageHeight : item.photos[slideIndex].height * ( item.photos[slideIndex].height / window.document.body.offsetHeight )
-                        })}
-                        bullets="dark"
-                    >
-                        { 
-                            item.photos.map((photo, index) => (
-                                <div key={index} style={{width: '100%', height : '100%', backgroundColor : '#fff'}}>
-                                    <img style={{  
-                                        maxHeight : '350px'
-                                    }} src={photo.photo_604}></img>
+                    { 
+                        item.photos.length > 0 && 
+                        (
+                            <Gallery
+                                slideWidth="100%"
+                                style={{ height: this.state.imageHeight, textAlign : 'center' }}
+                                bullets="dark"
+                            >
+                                { 
+                                    item.photos.map((photo, index) => (
+                                        <div key={index} style={{width: '100%', height : '100%', backgroundColor : '#fff'}}>
+                                            <img 
+                                                alt=""
+                                                style={{  
+                                                    maxHeight : '350px'
+                                                }} src={photo.sizes[photo.sizes.length - 1].url}>
+                                            </img>
+                                        </div>
+                                    ))
+                                }
+                            </Gallery>
+                        )
+                    }
+                    {
+                        item.photos.length === 0 &&
+                        (
+                            <Gallery
+                                slideWidth="100%"
+                                style={{ height: this.state.imageHeight, textAlign : 'center' }}
+                            >
+                                <div style={{width: '100%', height : '100%', backgroundColor : '#fff'}}>
+                                    <img 
+                                        alt=""
+                                        style={{  
+                                            maxHeight : '350px'
+                                        }} src={item.thumb_photo}></img>
                                 </div>
-                            ))
-                        }
-                    </Gallery>
+                            </Gallery>
+                        )
+                    }
                     <Group>
                         <Div>
                             {item.description}
@@ -76,7 +81,7 @@ class Item extends React.Component {
                 item == null &&
                 <div>
                     <PanelHeader 
-                        left={<Link style={{ textDecoration : 'none', color: '#fff'}} to="/items"><HeaderButton><Icon24Back/></HeaderButton></Link>}
+                        left={<HeaderButton data-to="items" onClick={(e) => this.props.go(e)}><Icon24Back/></HeaderButton>}
                     >Товар</PanelHeader>
                     <Group>
                         <Div>
