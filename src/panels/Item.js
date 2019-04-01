@@ -39,7 +39,7 @@ class Item extends React.Component {
                                             <img 
                                                 alt=""
                                                 style={{  
-                                                    maxHeight : '350px'
+                                                    maxHeight : this.state.imageHeight
                                                 }} src={photo.sizes[photo.sizes.length - 1].url}>
                                             </img>
                                         </div>

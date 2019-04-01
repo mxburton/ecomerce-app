@@ -15,9 +15,6 @@ class App extends React.Component {
 			items : [],
 			item : null
 		};
-
-		this.getItems = this.getItems.bind(this)
-		this.getInfoItem = this.getInfoItem.bind(this)
 	}
 
 	getLocationHash() {
@@ -80,7 +77,6 @@ class App extends React.Component {
 	}
 
 	render() {
-		console.log('render')
 		return (
 			<View activePanel={this.state.activePanel}>
 				<Items 
