@@ -4,8 +4,8 @@ self.__precacheManifest = [
     "url": "/ecomerce-app/static/js/runtime~main.b818b5c3.js"
   },
   {
-    "revision": "04e1e945978d9778e9de",
-    "url": "/ecomerce-app/static/js/main.d0c02631.chunk.js"
+    "revision": "76f747823e206b21ec94",
+    "url": "/ecomerce-app/static/js/main.760d7940.chunk.js"
   },
   {
     "revision": "6d6b9a6d578c91e517e8",
@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/ecomerce-app/static/css/2.d226bad7.chunk.css"
   },
   {
-    "revision": "e412e5499204afb652405655f222a89f",
+    "revision": "eb6175ec17bc14f1b7df1701b5c4bc92",
     "url": "/ecomerce-app/index.html"
   }
 ];
