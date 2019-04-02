@@ -28,6 +28,7 @@ class App extends React.Component {
 					this.setState({ authToken : e.detail.data.access_token });
 					break;
 				case 'VKWebAppCallAPIMethodResult':
+					console.log(e.detail.data)
 					if (e.detail.data.request_id === 1234567) {
 						this.setState({ items : e.detail.data.response.items })
 					}
@@ -54,13 +55,13 @@ class App extends React.Component {
 
 	getItems() {
 		const ownerId = -124527492
-		connect.send("VKWebAppCallAPIMethod", {"method": "market.get", "params": {"owner_id": ownerId , "v":"5.92", "access_token": this.state.authToken, "request_id" : 1234567 }});
+		connect.send("VKWebAppCallAPIMethod", {"method": "market.get", "request_id" : 1234567, "params": {"owner_id": ownerId , "v":"5.92", "access_token": this.state.authToken }});
 	}
 
 	getInfoItem(id) {
 		const ownerId = -124527492
 		let itemId = `${ownerId}_${id}`
-		connect.send("VKWebAppCallAPIMethod", {"method": "market.getById", "params": {"item_ids": itemId , "v":"5.92", "extended" : 1,  "access_token": this.state.authToken, "request_id" : 123 }});
+		connect.send("VKWebAppCallAPIMethod", {"method": "market.getById", "request_id" : 123,  "params": {"item_ids": itemId , "v":"5.92", "extended" : 1,  "access_token": this.state.authToken }});
 	}
 
 	go = (e, object) => {
