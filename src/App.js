@@ -1,6 +1,6 @@
 import React from 'react';
 import connect from '@vkontakte/vkui-connect'; //@vkontakte/vkui-connect-mock - для отладки
-import { View } from '@vkontakte/vkui';
+import { View, ConfigProvider } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
 import Items from './panels/Items';
 import Item from './panels/Item';
@@ -13,7 +13,8 @@ class App extends React.Component {
 			activePanel : 'items',
 			authToken : null,
 			items : [],
-			item : null
+			item : null,
+			history : ['items']
 		};
 	}
 
@@ -21,16 +22,41 @@ class App extends React.Component {
 		return window.location.hash.replace('#','')
 	}
 
+	getObjectUrlString(string) {
+		let search = string
+		let objectUrl = ( search === "") ? null : search.split("&").reduce(function(prev, curr) {
+			let p = curr.split("=");
+			prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+			return prev;
+		}, {});
+		return objectUrl
+	}
+
+	getActivePanelRenderString() {
+		let stringHash = this.getLocationHash()
+		let objectParametrs = this.getObjectUrlString(stringHash)
+		let renderStingActivePanel = 'items'
+
+		if (objectParametrs !== null && typeof objectParametrs.itemId !== 'undefined') {
+			renderStingActivePanel = 'item'
+		}
+
+		return renderStingActivePanel
+	}
+
 	componentWillMount() {
+
 		connect.subscribe((e) => {
 			switch (e.detail.type) {
 				case 'VKWebAppAccessTokenReceived':
 					this.setState({ authToken : e.detail.data.access_token }, function() {
-						let hash = this.getLocationHash()
-						if (hash === 'items') {
+						let stringActivePanel = this.getActivePanelRenderString()
+						if (stringActivePanel === 'items') {
 							this.setState({ activePanel : 'items' }, function() { this.getItems() })
-						} else if (hash.indexOf('item') !== -1) {
-							let id = hash.replace('item','')
+						} else if (stringActivePanel.indexOf('item') !== -1) {
+							let stringHash = this.getLocationHash()
+							let objectParametrs = this.getObjectUrlString(stringHash)
+							let id = objectParametrs.itemId
 							this.setState({ activePanel : 'item' }, function() { this.getInfoItem(id) })
 						} else {
 							this.setState({ activePanel : 'items' }, function() { this.getItems() })
@@ -65,31 +91,50 @@ class App extends React.Component {
 
 	go = (e, object) => {
 		let activePanel = e.currentTarget.dataset.to
-		this.setState({ activePanel : activePanel })
+		const history = [...this.state.history];
+		history.push(activePanel);
+
+		if (this.state.activePanel === 'items') {
+			connect.send('VKWebAppEnableSwipeBack');
+		}
+		this.setState({  history, activePanel })
 		if (activePanel === 'items') {
-			connect.send("VKWebAppSetLocation", {"location": "items"});
 			this.getItems()
 		}
 		if (activePanel === 'item') {
-			connect.send("VKWebAppSetLocation", {"location": `item${object.itemId}`});
 			this.getInfoItem(object.itemId)
 		}
 	}
 
+	goBack = () => {
+		const history = [...this.state.history];
+		history.pop();
+		const activePanel = history[history.length - 1];
+		if (activePanel === 'items') {
+		  connect.send('VKWebAppDisableSwipeBack');
+		}
+		this.setState({ history, activePanel });
+	}
+
 	render() {
 		return (
-			<View activePanel={this.state.activePanel}>
-				<Items 
-					id="items" 
-					items={this.state.items}
-					go={this.go}
-				/>
-				<Item 
-					id="item"
-					item={this.state.item}
-					go={this.go}
-				/>
-			</View>
+			<ConfigProvider isWebView={true}>
+				<View 
+					onSwipeBack={this.goBack} 
+					history={this.state.history} 
+					activePanel={this.state.activePanel}>
+					<Items 
+						id="items" 
+						items={this.state.items}
+						go={this.go}
+					/>
+					<Item 
+						id="item"
+						item={this.state.item}
+						go={this.go}
+					/>
+				</View>
+			</ConfigProvider>
 		);
 	}
 }

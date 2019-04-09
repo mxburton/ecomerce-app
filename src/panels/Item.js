@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Panel, PanelHeader, FixedLayout, Button, Div, Header, Gallery, Group, HeaderButton } from '@vkontakte/vkui';
 import Icon24Back from '@vkontakte/icons/dist/24/back'
+import connect from '@vkontakte/vkui-connect';
 
 class Item extends React.Component {
 	constructor(props) {
@@ -11,6 +12,10 @@ class Item extends React.Component {
             slideIndex: 0,
             imageHeight : 350
         }
+    }
+
+    shareItem() {
+        connect.send("VKWebAppShare", {"link": `https://vk.com/app6906999#itemId=${this.props.item.id}`});
     }
     
 	render() {
@@ -70,6 +75,15 @@ class Item extends React.Component {
                             {item.description}
                         </Div>
                     </Group>
+                    <Div>
+                        <Button 
+                            size="xl" 
+                            level="secondary"
+                            onClick={() => this.shareItem()}
+                        >
+                        Рассказать друзьям
+                        </Button>
+                    </Div>
                     <FixedLayout vertical="bottom">
                         <Div>
                             <Button size="xl" level="commerce">Купить</Button>
