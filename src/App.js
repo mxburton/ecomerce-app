@@ -35,7 +35,7 @@ class App extends React.Component {
 	getActivePanelRenderString() {
 		const stringHash = this.getLocationHash()
 		const objectParametrs = this.getObjectUrlString(stringHash)
-		const renderStingActivePanel = 'items'
+		let renderStingActivePanel = 'items'
 
 		if (objectParametrs !== null && typeof objectParametrs.itemId !== 'undefined') {
 			renderStingActivePanel = 'item'
@@ -49,8 +49,8 @@ class App extends React.Component {
 		connect.subscribe((e) => {
 			switch (e.detail.type) {
 				case 'VKWebAppAccessTokenReceived':
-					this.setState({ authToken : e.detail.data.access_token }, function() {
-						let stringActivePanel = this.getActivePanelRenderString()
+					this.setState({ authToken : e.detail.data.access_token }, () => {
+						const stringActivePanel = this.getActivePanelRenderString()
 						if (stringActivePanel === 'items') {
 							this.setState({ activePanel : 'items' }, () => { this.getItems() })
 						} else if (stringActivePanel.indexOf('item') !== -1) {
