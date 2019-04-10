@@ -33,9 +33,9 @@ class App extends React.Component {
 	}
 
 	getActivePanelRenderString() {
-		let stringHash = this.getLocationHash()
-		let objectParametrs = this.getObjectUrlString(stringHash)
-		let renderStingActivePanel = 'items'
+		const stringHash = this.getLocationHash()
+		const objectParametrs = this.getObjectUrlString(stringHash)
+		const renderStingActivePanel = 'items'
 
 		if (objectParametrs !== null && typeof objectParametrs.itemId !== 'undefined') {
 			renderStingActivePanel = 'item'
