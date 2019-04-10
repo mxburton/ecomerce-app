@@ -24,9 +24,9 @@ class App extends React.Component {
 
 	getObjectUrlString(string) {
 		let search = string
-		let objectUrl = ( search === "") ? null : search.split("&").reduce(function(prev, curr) {
-			let p = curr.split("=");
-			prev[decodeURIComponent(p[0])] = decodeURIComponent(p[1]);
+		let objectUrl = search === "" ? null : search.split("&").reduce((prev, curr) => {
+			const [key, value] = curr.split("=");
+			prev[decodeURIComponent(key)] = decodeURIComponent(value);
 			return prev;
 		}, {});
 		return objectUrl
@@ -52,14 +52,14 @@ class App extends React.Component {
 					this.setState({ authToken : e.detail.data.access_token }, function() {
 						let stringActivePanel = this.getActivePanelRenderString()
 						if (stringActivePanel === 'items') {
-							this.setState({ activePanel : 'items' }, function() { this.getItems() })
+							this.setState({ activePanel : 'items' }, () => { this.getItems() })
 						} else if (stringActivePanel.indexOf('item') !== -1) {
-							let stringHash = this.getLocationHash()
-							let objectParametrs = this.getObjectUrlString(stringHash)
-							let id = objectParametrs.itemId
-							this.setState({ activePanel : 'item' }, function() { this.getInfoItem(id) })
+							const stringHash = this.getLocationHash()
+							const objectParametrs = this.getObjectUrlString(stringHash)
+							const id = objectParametrs.itemId
+							this.setState({ activePanel : 'item' }, () => { this.getInfoItem(id) })
 						} else {
-							this.setState({ activePanel : 'items' }, function() { this.getItems() })
+							this.setState({ activePanel : 'items' }, () => { this.getItems() })
 						}
 					});
 					break;
